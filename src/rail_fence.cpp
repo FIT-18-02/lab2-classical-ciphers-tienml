@@ -23,26 +23,75 @@ string rail_fence_encrypt(const string &plaintext, int rails) {
     int direction = 1;
 
     for (char c : plaintext) {
-        // TODO(student): Q6 can keep spaces as normal characters.
         fence[rail] += c;
+
         rail += direction;
-        if (rail == rails - 1 || rail == 0) direction = -direction;
+
+        if (rail == rails - 1 || rail == 0) {
+            direction = -direction;
+        }
     }
 
     string ciphertext;
-    for (const string &row : fence) ciphertext += row;
+    for (const string &row : fence) {
+        ciphertext += row;
+    }
     return ciphertext;
 }
 
 string rail_fence_decrypt(const string &ciphertext, int rails) {
-    // TODO(student): Q5
-    return ciphertext;
+    // Q5: Giải mã Rail Fence
+    if (rails <= 1 || ciphertext.empty()) return ciphertext;
+
+    int n = ciphertext.length();
+    vector<vector<char>> fence(rails, vector<char>(n, '\n'));
+
+    // Bước 1: Đánh dấu đường đi zigzag bằng '*'
+    int rail = 0;
+    int direction = 1;
+    for (int col = 0; col < n; col++) {
+        fence[rail][col] = '*';
+
+        rail += direction;
+        if (rail == rails - 1 || rail == 0) {
+            direction = -direction;
+        }
+    }
+    int index = 0;
+    for (int i = 0; i < rails; i++) {
+        for (int j = 0; j < n; j++) {
+            if (fence[i][j] == '*' && index < n) {
+                fence[i][j] = ciphertext[index++];
+            }
+        }
+    }
+
+    string plaintext;
+    rail = 0;
+    direction = 1;
+
+    for (int col = 0; col < n; col++) {
+        plaintext += fence[rail][col];
+
+        rail += direction;
+        if (rail == rails - 1 || rail == 0) {
+            direction = -direction;
+        }
+    }
+
+    return plaintext;
 }
 
 string read_message_from_file(const string &path) {
     ifstream fin(path);
+
+    if (!fin.is_open()) {
+        return "";
+    }
+
     string line;
     getline(fin, line);
+    fin.close();
     return line;
 }
 
@@ -59,6 +108,12 @@ int main() {
 
     if (choice == 3) {
         message = read_message_from_file("data/input.txt");
+
+        if (message.empty()) {
+            cout << "Cannot read message from file.\n";
+            return 0;
+        }
+
         cout << "Message from file: " << message << "\n";
     } else {
         cout << "Enter message: ";
