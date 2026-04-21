@@ -25,14 +25,20 @@ char shift_char(char c, int shift) {
 string caesar_encrypt(const string &plaintext, int shift) {
     string ciphertext;
     for (char c : plaintext) {
-        // TODO(student): Q1 + Q2
-        ciphertext += shift_char(c, shift);
+        // Q1: Nếu là dấu cách thì giữ nguyên
+        if (c == ' ') {
+            ciphertext += c;
+        }
+        // Q2: Nếu là chữ cái thì dịch chuyển theo khóa
+        else {
+            ciphertext += shift_char(c, shift);
+        }
     }
     return ciphertext;
 }
 
 string caesar_decrypt(const string &ciphertext, int shift) {
-    // TODO(student): Q3
+    // Q3: Giải mã bằng cách mã hóa với khóa âm
     return caesar_encrypt(ciphertext, -shift);
 }
 
